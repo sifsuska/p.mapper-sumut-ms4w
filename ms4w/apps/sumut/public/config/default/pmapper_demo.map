@@ -1,0 +1,221 @@
+################################################################################################ 
+# Adapt settings in map file <tt>pmapper_demo.map</tt> for the following tags to match settings
+# on your machine (see additionally MapServer documentation for detailed information):
+#
+#  MAP
+#    SHAPEPATH 
+#    FONTSET
+#    SYMBOLSET
+#  
+#  WEB
+#    IMAGEPATH  
+#    IMAGEURL    
+#
+##################################################################################################
+
+#
+# Start of map file  
+#
+MAP
+  #EXTENT 19408.8949721552 9893571.08386353 922591.909835742 10520198.0592921
+  EXTENT 18848.2130856535 -63067.301551931 923157.72273557 476647.58039786
+  UNITS meters
+  SIZE 600 500
+  SHAPEPATH "../../../data"
+  SYMBOLSET "../common/symbols/symbols-pmapper.sym"   
+  SYMBOLSET "../../../data/symbols.sym"   
+  FONTSET "../common/fonts/msfontset.txt" 
+  FONTSET "../../../data/font.list" 
+  RESOLUTION 96
+  IMAGETYPE png
+  INTERLACE OFF
+  ## Update: Sekarang kita gunakan UTM Zone 47 North EPSG:32647
+  ##+proj=utm +zone=47 +datum=WGS84 +units=m +no_defs
+  PROJECTION
+    proj=utm zone=47 datum=WGS84 units=m no_defs
+  END  
+
+
+
+#
+# Start of web interface definition
+#
+WEB
+  TEMPLATE "map.html"
+  IMAGEPATH "/ms4w/tmp/ms_tmp/"
+  IMAGEURL "/ms_tmp/"
+  METADATA
+    #"MAPFILE_ENCODING" "ISO-8859-1" 
+    #"ows_title"     "WMS Demo Server"  
+    #"ows_onlineresource" "http://wms.yourserver.org?owskey=test&"   
+    #"ows_srs"       "EPSG:3035 EPSG:4326"  
+  END  # Metadata
+END  # Web
+
+#####
+# Start of Reference map definition
+# Perhatikan bahwa gambar Reference harus diletakkan di public folder!
+# tidak bisa diletakkan di data, karena tidak accessible
+REFERENCE
+  EXTENT 14905.8845731493 -63067.3015519309 927100.051248853 476647.58039786
+  #EXTENT 18848.2130856535 -63067.301551931 923157.72273557 476647.58039786
+  IMAGE "../../images/reference.png"
+  SIZE 361 214
+  COLOR -1 -1 -1
+  OUTLINECOLOR 255 0 0
+END  # Reference
+
+
+#
+# Start of legend object
+#
+LEGEND
+	STATUS OFF
+	IMAGECOLOR 255 255 255
+#	OUTLINECOLOR 0 0 0
+	POSITION ll
+	KEYSIZE 18 12
+	KEYSPACING 10 5 
+	TEMPLATE "void"
+	LABEL
+		TYPE TRUETYPE
+		FONT "FreeSans"
+		SIZE small
+		POSITION AUTO
+		COLOR 0 0 89
+		OUTLINECOLOR 255 255 255
+		ANTIALIAS TRUE
+	END
+END
+
+#
+# Start of ScaleBar definition
+#
+SCALEBAR
+  STATUS off
+  TRANSPARENT off
+  INTERVALS 4
+  SIZE 200 3
+  UNITS kilometers
+  COLOR 250 250 250
+  OUTLINECOLOR 0 0 0
+  #BACKGROUNDCOLOR 100 100 100
+  BACKGROUNDCOLOR 200 200 200
+  STYLE 0
+  POSTLABELCACHE true
+  LABEL
+    #COLOR 0 0 90
+    COLOR 123 45 90
+    #OUTLINECOLOR 200 200 200
+    SIZE small
+  END  # Label
+END  # Reference
+
+
+
+# SYMBOLS USED IN PMAPPER
+# - 'circle' always necessary (used e.g. for highlight)
+# - 'square' used in currecnt map file
+# Symbols can also be defined via tag SYMBOLSET (see above)
+Symbol
+  Name 'circle'
+  Type ELLIPSE
+  Filled TRUE
+  Points
+    1 1
+  END
+END 
+
+Symbol
+  Name 'square'
+  Type VECTOR
+  Filled TRUE
+  Points
+    0 1
+    0 0
+    1 0
+    1 1
+    0 1
+  END
+END
+
+
+#================== START OF LAYER SECTION =====================#
+
+
+
+  LAYER
+    CONNECTION "admin00.shp"
+    CONNECTIONTYPE OGR
+    METADATA
+      "DESCRIPTION"	"Dunia"
+      "coordsys_name"	"Longitude-Latitude / WGS 84"
+    END # METADATA
+    NAME "admin00"
+    PROJECTION
+      "proj=longlat"
+      "datum=WGS84"
+      "no_defs"
+    END # PROJECTION
+    STATUS ON
+    TEMPLATE "query.html"
+    TILEITEM "location"
+    TYPE POLYGON
+    UNITS METERS
+    CLASS
+      #NAME "Class (0)"
+      STYLE
+        COLOR 255 209 187
+        OUTLINECOLOR 0 0 0
+        PATTERN
+         1.00 2.00
+        END # PATTERN
+        SIZE 8
+        SYMBOL "Dot-1"
+      END # STYLE
+      TEMPLATE "query.html"
+    END # CLASS
+  END # LAYER
+
+  LAYER
+    CONNECTION "sumut_32647.shp"
+    CONNECTIONTYPE OGR
+    METADATA
+      "coordsys_name"	"WGS 84 / UTM zone 47N"
+      #"coordsys_name"	"Longitude-Latitude / WGS 84"
+      "DESCRIPTION"	"Sumatera Utara"
+    END # METADATA
+    NAME "sumut"
+    #PROJECTION
+    #  "proj=longlat"
+    #  "datum=WGS84"
+    #  "no_defs"
+    #END # PROJECTION
+    PROJECTION
+      "proj=utm"
+      "zone=47"
+      "datum=WGS84"
+      "units=m"
+      "no_defs"
+    END # PROJECTION	
+	
+    STATUS ON
+    TEMPLATE "query.html"
+    TILEITEM "location"
+    TYPE POLYGON
+    UNITS METERS
+    CLASS
+      #NAME "Class (0)"
+      STYLE
+        COLOR 128 255 128
+        OUTLINECOLOR 0 0 0
+        SIZE 8
+      END # STYLE
+      TEMPLATE "query.html"
+    END # CLASS
+  END # LAYER
+
+
+
+
+END  #Map

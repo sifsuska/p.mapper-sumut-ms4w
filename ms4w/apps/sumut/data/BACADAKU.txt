@@ -1,0 +1,92 @@
+
+GUNAKAN FOLDER INI UNTUK MENYIMPAN FILE SHP ANDA
+
+JIKA ANDA GALAU, BOLEH DILIHAT BERKAS SAMPLE MAPMANAGER.MAP NYA
+
+
+Jika Anda ingin mengkostumisasi pMapper, langkahnya adalah:
+
+1. Buatkan file SHP awalnya dalam CRS yang satuannya meter,
+terbaik adalah UTM (Universal Transverse Mercator),
+namun silahkan cari yang sesuai
+
+
+2. Buatkan REFERENCE nya, Gunakan MapManager, load SHP Anda, lalu menu File --> Save Map Image
+gunakan MapManager juga untuk mencari tahu EXTENT dari peta Anda
+
+
+# Perhatikan bahwa gambar Reference harus diletakkan di public folder!
+# tidak bisa diletakkan di data, karena tidak accessible
+REFERENCE
+  EXTENT 14905.8845731493 -63067.3015519309 927100.051248853 476647.58039786
+  IMAGE "../../images/reference.png"
+  SIZE 361 214
+  COLOR -1 -1 -1
+  OUTLINECOLOR 255 0 0
+END  # Reference
+
+resize agar mendekati 200 x 150 pixel
+
+3. ubah berkas 
+X:\ms4w\apps\sumut\public\config\default\pmapper_demo.map
+
+sesuaikan EXTENT,
+sesuaikan PROJECTION,
+sesuaikan REFERENCE,
+sesuaikan LAYER
+
+Gunakan pedoman dari MapManager
+
+optional, tambahkan META "DESCRIPTION" "Nama Peta Yang Ada Spasi", 
+Jika Anda ingin namanya beda dengan NAME di LAYER
+
+
+Optional, hapus path di CONNECTION pada LAYER nya agar peta Anda portable,
+misalnya menjadi:
+    CONNECTION "sumut_32647.shp"
+artinya, MapServer akan mencari ke tempat SHP default, yaitu di folder 
+/ms4w/apps/sumut/data
+
+4.ubah berkas
+X:\ms4w\apps\sumut\public\config\config_default.xml
+sesuaikan nama layer Anda di pmapper_demo.map dengan group di sini
+
+
+5. Optional: ubah berkas javascriptnya
+X:\ms4w\apps\sumut\public\config\default\js_config.php
+terutama bagian proyeksi, kalau proyeksi Anda berbeda
+
+Proj4js.defs["EPSG:32647"]="+proj=utm +zone=47 +datum=WGS84 +units=m +no_defs ";
+PM.ZoomBox.coordsDisplayReproject = true;
+PM.ZoomBox.coordsDisplaySrcPrj = "EPSG:32647";
+PM.ZoomBox.coordsDisplayDstPrj = "EPSG:4326";
+
+Artinya, koordinat yang di kiri bawah pMapper sekarang adalah dalam 4326, 
+bukan defaultnya 32647, sesuai dengan file pmapper_demo.map
+
+kenapa?
+karena manusia terbiasa dengan LatLong, EPSG:4326, WGS 84
+
+
+6. kalau Anda mengubah nama folder apps ini, Anda harus juga mengubah dua file berikut:
+D:\ms4w\httpd.d\httpd_sumut.conf
+dan
+
+Alias /sumut "/ms4w/apps/sumut/public" 
+
+<Directory "/ms4w/apps/sumut/public">
+  AllowOverride None
+  Options Indexes FollowSymLinks Multiviews 
+  Order allow,deny
+  Allow from all
+</Directory>
+
+
+
+
+
+REGARDS
+
+
+Muhammad Jazman
+jazman@uin-suska.ac.id
